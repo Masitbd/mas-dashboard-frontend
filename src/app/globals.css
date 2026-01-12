@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f2fbfa;
+  --fg: #1b2b2a;
+  --muted: #7d8c8b;
+  --card: #ffffff;
+  --border: #d7ece9;
+  --primary: #0a7f79;
+  --secondary: #4d5f5e;
+  --accent: #e7f7f5;
+  --brand: #00a59b;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', 'Times New Roman', serif;
+}
+
+[data-theme='dark'] {
+  --bg: #0f1414;
+  --fg: #f5fbfa;
+  --muted: #c1d4d2;
+  --card: #121a1a;
+  --border: #1b2525;
+  --primary: #f5fbfa;
+  --secondary: #d3e4e2;
+  --accent: #1b2525;
+  --brand: #00a59b;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: #f6e9dd;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.prose-content h1,
+.prose-content h2,
+.prose-content h3 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-family: var(--font-serif);
+}
+
+.prose-content p {
+  line-height: 1.8;
+  color: var(--secondary);
+}
+
+.prose-content ul,
+.prose-content ol {
+  padding-left: 1.5rem;
+}
+
+.prose-content blockquote {
+  border-left: 3px solid var(--border);
+  padding-left: 1rem;
+  color: var(--secondary);
+}
