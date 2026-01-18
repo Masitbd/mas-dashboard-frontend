@@ -1,4 +1,6 @@
-import { posts, comments, subscribers } from '@/mock/posts';
+"use client";
+import { posts, comments, subscribers } from "@/mock/posts";
+import { useSession } from "next-auth/react";
 
 export default function DashboardPage() {
   return (
