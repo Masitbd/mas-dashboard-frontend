@@ -6,6 +6,7 @@ import {
   Mail,
   User,
   Network,
+  Users,
 } from "lucide-react";
 
 const links = [
@@ -20,9 +21,9 @@ const links = [
   { href: "/dashboard/newsletter", label: "Newsletter", icon: Mail },
   { href: "/dashboard/profile", label: "Profile", icon: User },
   {
-    href: "/dashboard/categories",
-    label: "Categories",
-    icon: Network,
+    href: "/dashboard/users",
+    label: "Users",
+    icon: Users,
   },
 ];
 
