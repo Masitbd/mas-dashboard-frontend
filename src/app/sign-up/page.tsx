@@ -1,6 +1,8 @@
 "use client";
 
+import { useSignUpMutation } from "@/redux/api/users/user.api";
 import { Eye, EyeClosed, EyeClosedIcon, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
 // RegisterForm.tsx
 // Make sure (once) in your app entry: import "rsuite/dist/rsuite.min.css";
 
@@ -11,7 +13,7 @@ import Swal from "sweetalert2";
 
 type RegisterFormValues = {
   email: string;
-  name: string;
+  username: string;
   password: string;
   confirmPassword: string;
 };
@@ -19,7 +21,8 @@ type RegisterFormValues = {
 const { Panel, Form, Input, Button, Divider } = RSuite as any;
 
 export default function RegisterForm() {
-  const [loading, setLoading] = useState(false);
+  const [postData, { isLoading: loading }] = useSignUpMutation();
+  const router = useRouter();
 
   const {
     control,
@@ -30,7 +33,7 @@ export default function RegisterForm() {
   } = useForm<RegisterFormValues>({
     defaultValues: {
       email: "",
-      name: "",
+      username: "",
       password: "",
       confirmPassword: "",
     },
@@ -47,25 +50,22 @@ export default function RegisterForm() {
       });
       return;
     }
-
-    setLoading(true);
     try {
-      console.log("REGISTER DATA:", data);
-      // demo delay — remove later
-      await new Promise((r) => setTimeout(r, 900));
-      Swal.fire({
-        toast: true,
-        timer: 1000,
-        timerProgressBar: true,
-        icon: "success",
-        text: "Signed up successfully",
-        position: "top-end",
-        showConfirmButton: false,
-      });
+      const result = await postData(data).unwrap();
+      if (result?.success) {
+        Swal.fire({
+          toast: true,
+          timer: 1000,
+          timerProgressBar: true,
+          icon: "success",
+          text: "Signed up successfully. Please Login",
+          position: "top-end",
+          showConfirmButton: false,
+        });
+        router.push("/login");
+      }
     } catch (err) {
       console.log(err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -129,10 +129,10 @@ export default function RegisterForm() {
           <Form.Group>
             <Form.ControlLabel>Name</Form.ControlLabel>
             <Controller
-              name="name"
+              name="username"
               control={control}
               rules={{
-                required: "Name is required.",
+                required: "Username is required.",
                 minLength: { value: 2, message: "Minimum 2 characters." },
                 maxLength: { value: 50, message: "Maximum 50 characters." },
               }}
@@ -145,9 +145,9 @@ export default function RegisterForm() {
                 />
               )}
             />
-            {errors.name?.message ? (
+            {errors.username?.message ? (
               <div style={{ color: "#d11a2a", marginTop: 6, fontSize: 12 }}>
-                {errors.name.message}
+                {errors.username.message}
               </div>
             ) : null}
           </Form.Group>
@@ -177,7 +177,7 @@ export default function RegisterForm() {
                         setVisible(
                           visible == ENUM_VISIBILITY.VISIBLE
                             ? ENUM_VISIBILITY.IN_VISIBLE
-                            : ENUM_VISIBILITY.VISIBLE
+                            : ENUM_VISIBILITY.VISIBLE,
                         )
                       }
                     >
@@ -223,7 +223,7 @@ export default function RegisterForm() {
                         setVisible(
                           visible == ENUM_VISIBILITY.VISIBLE
                             ? ENUM_VISIBILITY.IN_VISIBLE
-                            : ENUM_VISIBILITY.VISIBLE
+                            : ENUM_VISIBILITY.VISIBLE,
                         )
                       }
                     >

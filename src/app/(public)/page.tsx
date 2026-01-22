@@ -2,10 +2,11 @@
 import { Container } from "@/components/layout/container";
 import { AuthorBadge } from "@/components/blog/author-badge";
 import { BlogPagination } from "@/components/ui/pagination";
-import { useGetPostsQuery } from "@/store/api";
+
 import { PostCardSkeleton } from "@/components/ui/skeletons";
 import Image from "next/image";
 import { useState } from "react";
+import { useGetPostsQuery } from "@/redux/api/suppliers/supplier.api";
 
 export default function HomePage() {
   const search = "";

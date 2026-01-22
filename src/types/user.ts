@@ -23,7 +23,6 @@ export type UserProfile = {
   id: string; // DB primary key
   uuid: string; // stable public identifier
 
-  userId: string; // FK -> User.id (unique for 1:1)
   displayName: string;
 
   avatarUrl: string | null;

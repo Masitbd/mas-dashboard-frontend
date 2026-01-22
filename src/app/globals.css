@@ -15,6 +15,15 @@
   --brand: #00a59b;
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-serif: 'Playfair Display', 'Times New Roman', serif;
+  --rs-primary-100: #e6f6f5;
+    --rs-primary-200: #bfe8e6;
+    --rs-primary-300: #99dbd7;
+    --rs-primary-400: #66c9c3;
+    --rs-primary-500: #00a59b;
+    --rs-primary-600: #008c84;
+    --rs-primary-700: #00736c;
+    --rs-primary-800: #005b55;
+    --rs-primary-900: #00423e;
 }
 
 [data-theme='dark'] {
