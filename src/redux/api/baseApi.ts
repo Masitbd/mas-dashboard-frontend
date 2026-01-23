@@ -41,5 +41,6 @@ export const baseApi = createApi({
     "Comments",
     "Newsletter",
     "Profiles",
+    "Categories",
   ],
 });

@@ -11,6 +11,8 @@ import {
   Button,
 } from "rsuite";
 import { Eye, Pencil, Trash2 } from "lucide-react";
+import { useGetCategoriesQuery } from "@/redux/api/categories/category.api";
+import { NavLink } from "@/components/layout/Navlink";
 
 type Category = {
   id: string;
@@ -44,28 +46,20 @@ const MOCK_CATEGORIES: Category[] = [
 ];
 
 export default function PostCategoriesTable() {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<Category[]>([]);
+  const { data: categories, isLoading: loading } = useGetCategoriesQuery({
+    page: 1,
+    limit: 100,
+  });
   const toaster = useToaster();
-
-  useEffect(() => {
-    // Simulate API fetch
-    const t = setTimeout(() => {
-      setData(MOCK_CATEGORIES);
-      setLoading(false);
-    }, 900);
-
-    return () => clearTimeout(t);
-  }, []);
 
   const handleDelete = (category: Category) => {
     // Replace with your API call + confirmation flow
-    setData((prev) => prev.filter((c) => c.id !== category.id));
+    // setData((prev) => prev.filter((c) => c.id !== category.id));
     toaster.push(
       <Message type="success" closable>
         Category deleted: <b>{category.name}</b>
       </Message>,
-      { placement: "topEnd" }
+      { placement: "topEnd" },
     );
   };
 
@@ -82,7 +76,7 @@ export default function PostCategoriesTable() {
 
       <div className="overflow-hidden rounded-xl border border-border bg-card">
         <Table
-          data={data}
+          data={categories?.data?.data || []}
           loading={loading}
           bordered
           autoHeight
@@ -110,8 +104,8 @@ export default function PostCategoriesTable() {
                     appearance="ghost"
                     aria-label="Update"
                     icon={<Pencil size={16} />}
-                    as={Link}
-                    href={`/dashboard/categories/${rowData.id}/edit`}
+                    as={NavLink}
+                    href={`/dashboard/categories/new?id=${rowData._id}&mode=${"edit"}`}
                   />
                   <IconButton
                     size="sm"
@@ -134,12 +128,6 @@ export default function PostCategoriesTable() {
             </Cell>
           </Column>
         </Table>
-
-        {!loading && data.length === 0 && (
-          <div className="p-6">
-            <Message type="info">No categories found.</Message>
-          </div>
-        )}
       </div>
     </div>
   );
