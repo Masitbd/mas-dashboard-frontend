@@ -11,56 +11,36 @@ import {
   Button,
 } from "rsuite";
 import { Eye, Pencil, Trash2 } from "lucide-react";
-import { useGetCategoriesQuery } from "@/redux/api/categories/category.api";
+import {
+  useDeleteCategoryMutation,
+  useGetCategoriesQuery,
+} from "@/redux/api/categories/category.api";
 import { NavLink } from "@/components/layout/Navlink";
+import { confirmDeleteById } from "@/components/layout/SwalConfiramation";
 
 type Category = {
-  id: string;
+  _id: string;
   name: string;
   description: string;
 };
 
 const { Column, HeaderCell, Cell } = Table;
 
-const MOCK_CATEGORIES: Category[] = [
-  {
-    id: "cat_1",
-    name: "Technology",
-    description: "Engineering, software, AI, and product updates.",
-  },
-  {
-    id: "cat_2",
-    name: "Business",
-    description: "Strategy, operations, and execution playbooks.",
-  },
-  {
-    id: "cat_3",
-    name: "Lifestyle",
-    description: "Habits, routines, and practical life guidance.",
-  },
-  {
-    id: "cat_4",
-    name: "Announcements",
-    description: "Release notes, changelogs, and platform news.",
-  },
-];
-
 export default function PostCategoriesTable() {
   const { data: categories, isLoading: loading } = useGetCategoriesQuery({
-    page: 1,
-    limit: 100,
+    page: 1 as unknown as string,
+    limit: 100 as unknown as string,
   });
   const toaster = useToaster();
 
-  const handleDelete = (category: Category) => {
-    // Replace with your API call + confirmation flow
-    // setData((prev) => prev.filter((c) => c.id !== category.id));
-    toaster.push(
-      <Message type="success" closable>
-        Category deleted: <b>{category.name}</b>
-      </Message>,
-      { placement: "topEnd" },
-    );
+  // deleting functionality for category
+  const [deleteCategory, { isLoading }] = useDeleteCategoryMutation();
+
+  const handleDelete = async (id: string | number) => {
+    const result = await deleteCategory(id as string).unwrap();
+    if (result?.success) {
+      return result?.data;
+    }
   };
 
   return (
@@ -107,21 +87,29 @@ export default function PostCategoriesTable() {
                     as={NavLink}
                     href={`/dashboard/categories/new?id=${rowData._id}&mode=${"edit"}`}
                   />
-                  <IconButton
+                  {/* <IconButton
                     size="sm"
                     appearance="ghost"
                     aria-label="View"
                     icon={<Eye size={16} />}
                     as={Link}
                     href={`/dashboard/categories/${rowData.id}`}
-                  />
+                  /> */}
                   <IconButton
                     size="sm"
                     appearance="ghost"
                     color="red"
                     aria-label="Delete"
                     icon={<Trash2 size={16} />}
-                    onClick={() => handleDelete(rowData)}
+                    onClick={async () =>
+                      await confirmDeleteById(
+                        rowData._id as string,
+                        handleDelete,
+                        {
+                          successText: "Category has been deleted.",
+                        },
+                      )
+                    }
                   />
                 </ButtonToolbar>
               )}

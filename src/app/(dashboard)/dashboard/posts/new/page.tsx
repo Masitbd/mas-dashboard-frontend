@@ -1,29 +1,53 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Form, Textarea } from "rsuite";
+import { Button, Form, SelectPicker, TagPicker, Textarea } from "rsuite";
 import { PostEditor } from "@/components/blog/post-editor";
-import { useCreatePostMutation } from "@/store/api";
+import { useGetCategoriesQuery } from "@/redux/api/categories/category.api";
+import { useCreatePostMutation } from "@/redux/api/posts/post.api";
+import { useGetTagsQuery } from "@/redux/api/tags/tags.api";
 
 export default function NewPostPage() {
+  const [createPost, { isLoading: createPostLoading }] =
+    useCreatePostMutation();
   const [formValue, setFormValue] = useState({
     title: "",
     category: "",
     excerpt: "",
+    coverImage: "",
+    tags: [] as string[],
   });
   const [content, setContent] = useState("");
   const [preview, setPreview] = useState(false);
-  const [createPost] = useCreatePostMutation();
 
   const handleSave = async () => {
     await createPost({
       title: formValue.title,
       excerpt: formValue.excerpt,
       category: formValue.category,
-      content,
+      content: content,
+      coverImage: formValue.coverImage,
+      tagIds: formValue.tags || [],
     });
   };
 
+  const {
+    data: categories,
+    isLoading: categoryLoading,
+    isFetching: categoryFetching,
+  } = useGetCategoriesQuery({
+    limit: "100",
+    page: "1",
+  });
+
+  const {
+    data: tags,
+    isLoading: tagLoading,
+    isFetching: tagFetching,
+  } = useGetTagsQuery({
+    limit: "100",
+    page: "1",
+  });
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -66,9 +90,45 @@ export default function NewPostPage() {
               placeholder="Short summary"
             />
           </Form.Group>
+          <Form.Group controlId="coverImage">
+            <Form.ControlLabel>Cover Image</Form.ControlLabel>
+            <Form.Control
+              name="coverImage"
+              rows={3}
+              placeholder="Cover Image"
+            />
+          </Form.Group>
           <Form.Group controlId="category">
             <Form.ControlLabel>Category</Form.ControlLabel>
-            <Form.Control name="category" placeholder="Lifestyle" />
+            <Form.Control
+              name="category"
+              placeholder="Lifestyle"
+              accepter={SelectPicker}
+              block
+              loading={categoryLoading || categoryFetching}
+              data={
+                categories?.data?.data.map((cat) => ({
+                  label: cat.name,
+                  value: cat._id,
+                })) || []
+              }
+            />
+          </Form.Group>
+          <Form.Group controlId="tags">
+            <Form.ControlLabel>Tags</Form.ControlLabel>
+            <Form.Control
+              name="tags"
+              placeholder="Lifestyle"
+              accepter={TagPicker}
+              block
+              loading={tagLoading || tagFetching}
+              data={
+                tags?.data?.data.map((cat) => ({
+                  label: cat.name,
+                  value: cat._id,
+                })) || []
+              }
+            />
           </Form.Group>
           <PostEditor content={content} onChange={setContent} />
         </Form>

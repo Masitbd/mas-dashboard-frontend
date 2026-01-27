@@ -1,12 +1,14 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Button } from 'rsuite';
-import { useGetPostsQuery } from '@/store/api';
+import { StatusTag } from "@/components/layout/Status";
+import { useGetPostsPopulatedQuery } from "@/redux/api/posts/post.api";
+import Link from "next/link";
+import { Button } from "rsuite";
 
 export default function DashboardPostsPage() {
-  const { data } = useGetPostsQuery({ page: '1', limit: '10' });
+  const { data: postData } = useGetPostsPopulatedQuery({ page: 1, limit: 10 });
 
+  console.log(postData);
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -21,18 +23,25 @@ export default function DashboardPostsPage() {
             <tr>
               <th className="px-6 py-4 text-left">Title</th>
               <th className="px-6 py-4 text-left">Category</th>
-              <th className="px-6 py-4 text-left">Published</th>
+              <th className="px-6 py-4 text-left">Status</th>
               <th className="px-6 py-4 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {(data?.data || []).map((post) => (
+            {(postData?.data?.items || []).map((post) => (
               <tr key={post.id} className="border-b border-border">
                 <td className="px-6 py-4 font-medium">{post.title}</td>
-                <td className="px-6 py-4 text-secondary">{post.category}</td>
-                <td className="px-6 py-4 text-secondary">{post.publishedAt}</td>
+                <td className="px-6 py-4 text-secondary">
+                  {post.category?.name}
+                </td>
+                <td className="px-6 py-4 text-secondary">
+                  <StatusTag status={post.status} />
+                </td>
                 <td className="px-6 py-4">
-                  <Link href={`/dashboard/posts/${post.id}/edit`} className="text-xs text-primary">
+                  <Link
+                    href={`/dashboard/posts/${post._id}/edit`}
+                    className="text-xs text-primary"
+                  >
                     Edit
                   </Link>
                 </td>

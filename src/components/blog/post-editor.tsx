@@ -43,9 +43,11 @@ const extensions = [
 export function PostEditor({
   content,
   onChange,
+  defaultContent,
 }: {
   content: string;
   onChange: (value: string) => void;
+  defaultContent?: string;
 }) {
   const editor = useEditor({
     extensions,
@@ -58,17 +60,14 @@ export function PostEditor({
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       onChange(html);
-
-      window.localStorage.setItem("draft-content", html);
     },
   });
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("draft-content");
-    if (saved && editor) {
-      editor.commands.setContent(saved);
+    if (editor && defaultContent) {
+      editor.commands.setContent(defaultContent);
     }
-  }, [editor]);
+  }, [editor, defaultContent]);
 
   if (!editor) {
     return null;

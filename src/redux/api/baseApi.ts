@@ -42,5 +42,6 @@ export const baseApi = createApi({
     "Newsletter",
     "Profiles",
     "Categories",
+    "Tags",
   ],
 });

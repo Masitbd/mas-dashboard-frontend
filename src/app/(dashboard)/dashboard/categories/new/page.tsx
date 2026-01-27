@@ -65,11 +65,11 @@ export default function NewCategoryPage() {
 
   const handleSubmit = async () => {
     // Client-side validation via rsuite schema
-    const check = model.check(formValue);
+    const check: any = model.check(formValue);
     if (check?.hasError) {
       setFormError(
         Object.fromEntries(
-          Object.entries(check.errors).map(([k, v]) => [
+          Object.entries(check.errors).map(([k, v]: [k: any, v: any]) => [
             k,
             v?.[0]?.message || "Invalid",
           ]),
