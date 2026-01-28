@@ -7,6 +7,9 @@ import { PostCardSkeleton } from "@/components/ui/skeletons";
 import Image from "next/image";
 import { useState } from "react";
 import { useGetPostsQuery } from "@/redux/api/suppliers/supplier.api";
+import PopularPostHompage from "@/components/blog/FeaturedPost";
+import FeaturedPost from "@/components/blog/FeaturedPost";
+import PopularPosts from "@/components/blog/PopularPosts";
 
 export default function HomePage() {
   const search = "";
@@ -49,7 +52,8 @@ export default function HomePage() {
     <div className="py-12">
       <Container>
         <section className="grid gap-10 lg:grid-cols-[2.2fr,1fr]">
-          <div className="space-y-8">
+          <FeaturedPost />
+          {/* <div className="space-y-8">
             <div className="flex items-center gap-3 text-sm font-semibold text-foreground">
               <span className="rounded bg-brand px-2 py-1 text-xs uppercase tracking-[0.2em] text-white">
                 Featured
@@ -90,8 +94,8 @@ export default function HomePage() {
                     <PostCardSkeleton key={index} />
                   ))}
             </div>
-          </div>
-          <div className="space-y-6">
+          </div> */}
+          {/* <div className="space-y-6">
             <div className="flex items-center gap-3 text-sm font-semibold text-foreground">
               <span className="rounded bg-brand px-2 py-1 text-xs uppercase tracking-[0.2em] text-white">
                 Popular
@@ -130,7 +134,8 @@ export default function HomePage() {
                     <PostCardSkeleton key={index} />
                   ))}
             </div>
-          </div>
+          </div> */}
+          <PopularPosts />
         </section>
 
         <section className="mt-16 grid gap-10 lg:grid-cols-[2.2fr,1fr]">

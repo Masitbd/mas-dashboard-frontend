@@ -155,10 +155,22 @@ const postApi = baseApi.injectEndpoints({
       { id: string; status: PostStatus }
     >({
       query: ({ id, status }) => ({
-        url: `/posts/change-status/${id}`,
+        url: `/posts/change-status/test/${id}`,
         method: "PATCH",
         body: { status },
         data: { status },
+      }),
+      invalidatesTags: ["Posts"],
+    }),
+    changePostPlacement: builder.mutation<
+      SingleResponse<{ data: string }>,
+      { id: string; placement: PostStatus }
+    >({
+      query: ({ id, placement }) => ({
+        url: `/posts/change-placement/old/${id}`,
+        method: "PATCH",
+        body: { placement },
+        data: { placement },
       }),
       invalidatesTags: ["Posts"],
     }),
@@ -189,6 +201,7 @@ export const {
   useRemoveTagsFromPostMutation,
 
   useChangePostStatusMutation,
+  useChangePostPlacementMutation,
 } = postApi;
 
 export default postApi;

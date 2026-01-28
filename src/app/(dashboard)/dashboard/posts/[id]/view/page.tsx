@@ -24,6 +24,9 @@ import {
   UserCircle2,
 } from "lucide-react";
 import { useGetPostByIdPopulatedQuery } from "@/redux/api/posts/post.api";
+import { StatusChangingButton } from "@/components/blog/StatusChangingButton";
+import { PostPopulated } from "@/types/posts";
+import PostPlacementCard from "@/components/blog/PlacementCard";
 
 type PostStatus = "draft" | "published" | "archived" | string;
 
@@ -263,14 +266,7 @@ export default function DashboardPostViewPage() {
                   Edit
                 </Button>
 
-                <Button
-                  appearance="ghost"
-                  startIcon={<RefreshCw size={18} />}
-                  onClick={onChangeStatus}
-                  className="!rounded-xl !border !border-[var(--border)] !bg-[var(--accent)] hover:!bg-white"
-                >
-                  Change status
-                </Button>
+                <StatusChangingButton post={post as PostPopulated} />
 
                 <Button
                   appearance="ghost"
@@ -320,20 +316,20 @@ export default function DashboardPostViewPage() {
               <Panel
                 bordered
                 className="!rounded-2xl !border-[var(--border)] !bg-white"
-                header={
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold">Post content</span>
-                    <span className="text-xs text-[var(--muted)]">
-                      (Rendered from HTML)
-                    </span>
-                  </div>
-                }
+                // header={
+                //   <div className="flex items-center justify-between">
+                //     <span className="text-sm font-semibold">Post content</span>
+                //     <span className="text-xs text-[var(--muted)]">
+                //       (Rendered from HTML)
+                //     </span>
+                //   </div>
+                // }
               >
                 <div
                   className={cx(
                     "text-[15px] leading-7 text-[var(--fg)]",
                     // lightweight “prose-like” styling without requiring typography plugin
-                    "[&_p]:my-3 [&_strong]:font-semibold [&_em]:italic",
+                    "[&_p]:my-2 [&_strong]:font-semibold [&_em]:italic",
                     "[&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-6",
                     "[&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-6",
                     "[&_a]:text-[var(--primary)] [&_a]:underline",
@@ -443,6 +439,7 @@ export default function DashboardPostViewPage() {
                   </div>
                 </dl>
               </div>
+              <PostPlacementCard post={post} />
             </div>
           </div>
         </div>

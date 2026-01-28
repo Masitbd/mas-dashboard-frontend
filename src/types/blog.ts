@@ -6,6 +6,7 @@ export interface Author {
   role: Role;
   image?: string;
   bio?: string;
+  displayName: string;
 }
 
 export interface Post {

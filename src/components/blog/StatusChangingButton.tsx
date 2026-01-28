@@ -1,11 +1,25 @@
+import { useChangePostStatusMutation } from "@/redux/api/posts/post.api";
 import { PostPopulated } from "@/types/posts";
 import { RefreshCw } from "lucide-react";
 import React from "react";
-import { Button } from "rsuite";
+import { Button, Message, useToaster } from "rsuite";
 import Swal from "sweetalert2";
 
-const StatusChangingButton = (post: PostPopulated) => {
-  const [updatePostStatus] = useUpdatePostStatusMutation();
+export const StatusChangingButton = (props: { post: PostPopulated }) => {
+  const { post } = props;
+  const [updatePostStatus] = useChangePostStatusMutation();
+  const toaster = useToaster();
+  const toast = (
+    type: "info" | "success" | "warning" | "error",
+    msg: string,
+  ) => {
+    toaster.push(
+      <Message showIcon type={type} closable>
+        {msg}
+      </Message>,
+      { placement: "topEnd", duration: 2400 },
+    );
+  };
 
   // optional helper (recommended) for nicer error messages
   const getApiErrorMessage = (err: any) => {
@@ -105,8 +119,3 @@ const StatusChangingButton = (post: PostPopulated) => {
     </Button>
   );
 };
-
-export default StatusChangingButton;
-function toast(arg0: string, arg1: string) {
-  throw new Error("Function not implemented.");
-}
