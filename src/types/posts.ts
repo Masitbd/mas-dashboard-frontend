@@ -47,11 +47,12 @@ export type PostBase = {
 
   createdAt?: string;
   updatedAt?: string;
+  status: string;
 };
 
 export type PostRaw = PostBase & {
-  categoryId: ObjectIdString;
-  tagIds: ObjectIdString[];
+  category: ObjectIdString;
+  tags: ObjectIdString[];
   authorId: ObjectIdString;
 };
 

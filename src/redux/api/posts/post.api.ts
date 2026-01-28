@@ -1,6 +1,7 @@
 // redux/features/post/postApi.ts
 "use client";
 
+import { PostStatus } from "@/components/layout/Status";
 import { baseApi } from "../baseApi";
 import type {
   CreatePostPayload,
@@ -23,21 +24,19 @@ import type {
 const postApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // GET /posts?page=&limit=&searchTerm=&sort=&categoryId=&authorId=&tagId=
-    getPosts: builder.query<PaginatedResponse<PostRaw>, Record<string, string>>(
-      {
-        query: (params) => ({
-          url: "/posts",
-          params,
-          method: "GET",
-        }),
-        providesTags: ["Posts"],
-      },
-    ),
+    getPosts: builder.query<PaginatedResponse<PostRaw>, Record<string, any>>({
+      query: (params) => ({
+        url: "/posts",
+        params,
+        method: "GET",
+      }),
+      providesTags: ["Posts"],
+    }),
 
     // GET /posts?...&populate=true
     getPostsPopulated: builder.query<
       PaginatedResponse<PostPopulated>,
-      Record<string, string>
+      Record<string, any>
     >({
       query: (params) => ({
         url: "/posts",
@@ -149,6 +148,20 @@ const postApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Posts"],
     }),
+
+    // DELETE /posts/:id/tags  body: { tagIds: string[] }
+    changePostStatus: builder.mutation<
+      SingleResponse<{ data: string }>,
+      { id: string; status: PostStatus }
+    >({
+      query: ({ id, status }) => ({
+        url: `/posts/change-status/${id}`,
+        method: "PATCH",
+        body: { status },
+        data: { status },
+      }),
+      invalidatesTags: ["Posts"],
+    }),
   }),
 });
 
@@ -174,6 +187,8 @@ export const {
 
   useAddTagsToPostMutation,
   useRemoveTagsFromPostMutation,
+
+  useChangePostStatusMutation,
 } = postApi;
 
 export default postApi;

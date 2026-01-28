@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Button, Form, SelectPicker, TagPicker, Textarea } from "rsuite";
 import { PostEditor } from "@/components/blog/post-editor";
 import {
+  useGetPostByIdPopulatedQuery,
   useGetPostByIdQuery,
   useUpdatePostMutation,
 } from "@/redux/api/posts/post.api";
