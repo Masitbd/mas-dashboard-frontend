@@ -2,6 +2,7 @@ import { useGetPostsPopulatedQuery } from "@/redux/api/posts/post.api";
 import React from "react";
 import Image from "next/image";
 import { PostCardSkeleton } from "../ui/skeletons";
+import Link from "next/link";
 
 const PopularPosts = () => {
   const { data: postData } = useGetPostsPopulatedQuery({
@@ -21,30 +22,32 @@ const PopularPosts = () => {
       <div className="space-y-4">
         {postData?.data?.data
           ? postData?.data?.data?.map((post) => (
-              <article
-                key={post._id}
-                className="flex gap-4 rounded-xl border border-border bg-card p-4"
-              >
-                <div className="relative h-16 w-16 overflow-hidden rounded-lg bg-accent">
-                  <Image
-                    src={post.coverImage}
-                    alt={post.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <span className="rounded bg-accent px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] text-brand">
-                    {post.category?.name}
-                  </span>
-                  <p className="text-sm font-semibold text-foreground">
-                    {post.title}
-                  </p>
-                  <div className="text-[11px] text-muted">
-                    {post.author.name} · {post.readingTime}
+              <Link href={`/posts/${post?.slug}`}>
+                <article
+                  key={post._id}
+                  className="flex gap-4 rounded-xl border border-border bg-card p-4 my-2"
+                >
+                  <div className="relative h-16 w-16 overflow-hidden rounded-lg bg-accent">
+                    <Image
+                      src={post.coverImage}
+                      alt={post.title}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
-                </div>
-              </article>
+                  <div className="flex-1 space-y-1">
+                    <span className="rounded bg-accent px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] text-brand">
+                      {post.category?.name}
+                    </span>
+                    <p className="text-sm font-semibold text-foreground">
+                      {post.title}
+                    </p>
+                    <div className="text-[11px] text-muted">
+                      {post.author.displayName} · {post.readingTime}
+                    </div>
+                  </div>
+                </article>
+              </Link>
             ))
           : Array.from({ length: 4 }).map((_, index) => (
               <PostCardSkeleton key={index} />

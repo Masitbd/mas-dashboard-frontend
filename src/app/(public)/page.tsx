@@ -10,43 +10,13 @@ import { useGetPostsQuery } from "@/redux/api/suppliers/supplier.api";
 import PopularPostHompage from "@/components/blog/FeaturedPost";
 import FeaturedPost from "@/components/blog/FeaturedPost";
 import PopularPosts from "@/components/blog/PopularPosts";
+import RecentlyPostedSection from "@/components/blog/RecentlyPostedSection";
+import TopCategories from "@/components/blog/TopCategories";
+import TopTags from "@/components/blog/TopTags";
 
 export default function HomePage() {
   const search = "";
   const [page, setPage] = useState(1);
-  const { data } = useGetPostsQuery({
-    search,
-    page: String(page),
-    limit: "6",
-  });
-
-  const posts = data?.data || [];
-  const featured = posts.slice(0, 2);
-  const popular = posts.slice(2, 6);
-  const recent = posts.slice(0, 8);
-
-  const sidebarAuthors = [
-    { name: "Jenny Kia", role: "Fashion Designer, Blogger, Activist" },
-    { name: "Andress Rasel", role: "Blogger, Activist, Content Creator" },
-    { name: "Jenny Kia", role: "Fashion Designer, Blogger, Activist" },
-  ];
-  const sidebarCategories = [
-    { label: "Lifestyle", count: 9 },
-    { label: "Travel", count: 5 },
-    { label: "Food", count: 9 },
-    { label: "Healthcare", count: 10 },
-    { label: "Technology", count: 3 },
-  ];
-  const sidebarTags = [
-    "Travel",
-    "Lifestyle",
-    "Fashion",
-    "Technology",
-    "Business",
-    "Design",
-    "Health",
-    "Food",
-  ];
 
   return (
     <div className="py-12">
@@ -139,7 +109,7 @@ export default function HomePage() {
         </section>
 
         <section className="mt-16 grid gap-10 lg:grid-cols-[2.2fr,1fr]">
-          <div>
+          {/* <div>
             <div className="flex items-center gap-3 text-sm font-semibold text-foreground">
               <span className="rounded bg-brand px-2 py-1 text-xs uppercase tracking-[0.2em] text-white">
                 Recently
@@ -186,10 +156,11 @@ export default function HomePage() {
                 onChange={setPage}
               />
             </div>
-          </div>
+          </div> */}
+          <RecentlyPostedSection />
 
           <aside className="space-y-8">
-            <div className="rounded-2xl border border-border bg-card p-5">
+            {/* <div className="rounded-2xl border border-border bg-card p-5">
               <p className="text-sm font-semibold text-foreground">
                 <span className="rounded bg-brand px-2 py-1 text-xs uppercase tracking-[0.2em] text-white">
                   Top
@@ -209,8 +180,8 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-            </div>
-            <div className="rounded-2xl bg-brand p-5 text-white">
+            </div> */}
+            {/* <div className="rounded-2xl bg-brand p-5 text-white">
               <p className="text-sm font-semibold">
                 Want To Travel Sikkim By Car?
               </p>
@@ -221,27 +192,9 @@ export default function HomePage() {
               <button className="mt-4 rounded-full border border-white px-4 py-1 text-xs uppercase tracking-[0.2em]">
                 Visit Us
               </button>
-            </div>
-            <div className="rounded-2xl border border-border bg-card p-5">
-              <p className="text-sm font-semibold text-foreground">
-                <span className="rounded bg-brand px-2 py-1 text-xs uppercase tracking-[0.2em] text-white">
-                  Categories
-                </span>
-              </p>
-              <div className="mt-4 space-y-3 text-sm">
-                {sidebarCategories.map((category) => (
-                  <div
-                    key={category.label}
-                    className="flex items-center justify-between"
-                  >
-                    <span>{category.label}</span>
-                    <span className="text-muted">
-                      {String(category.count).padStart(2, "0")}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            </div> */}
+
+            <TopCategories />
             <div className="rounded-2xl border border-border bg-card p-5">
               <p className="text-sm font-semibold text-foreground">
                 <span className="rounded bg-brand px-2 py-1 text-xs uppercase tracking-[0.2em] text-white">
@@ -265,37 +218,8 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
-            <div className="rounded-2xl border border-border bg-card p-5">
-              <p className="text-sm font-semibold text-foreground">
-                <span className="rounded bg-brand px-2 py-1 text-xs uppercase tracking-[0.2em] text-white">
-                  Instagram
-                </span>{" "}
-                Posts
-              </p>
-              <div className="mt-4 grid grid-cols-3 gap-2">
-                {Array.from({ length: 9 }).map((_, index) => (
-                  <div key={index} className="h-16 rounded-lg bg-accent" />
-                ))}
-              </div>
-            </div>
-            <div className="rounded-2xl border border-border bg-card p-5">
-              <p className="text-sm font-semibold text-foreground">
-                <span className="rounded bg-brand px-2 py-1 text-xs uppercase tracking-[0.2em] text-white">
-                  Search
-                </span>{" "}
-                With Tags
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {sidebarTags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full border border-border px-3 py-1 text-xs text-secondary"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
+
+            <TopTags />
           </aside>
         </section>
       </Container>

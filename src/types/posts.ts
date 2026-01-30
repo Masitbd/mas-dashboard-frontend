@@ -27,11 +27,12 @@ export type TagDTO = {
 
 export type AuthorDTO = {
   _id: ObjectIdString;
-  name: string;
+
   email?: string;
   avatarUrl?: string;
   createdAt?: string;
   updatedAt?: string;
+  displayName: string;
 };
 
 export type PostBase = {
@@ -116,3 +117,11 @@ export type CreatePostPayload = {
 };
 
 export type UpdatePostPayload = Partial<CreatePostPayload>;
+
+// ------------------------Top Categories------------------
+export type TopCategoryWithPostCount = {
+  _id: string; // ObjectId as string
+  postCount: number;
+  name: string;
+  description: string;
+};

@@ -11,6 +11,7 @@ import type {
   DeleteResponse,
   PostRaw,
   PostPopulated,
+  TopCategoryWithPostCount,
 } from "@/types/posts";
 
 /**
@@ -27,6 +28,23 @@ const postApi = baseApi.injectEndpoints({
     getPosts: builder.query<PaginatedResponse<PostRaw>, Record<string, any>>({
       query: (params) => ({
         url: "/posts",
+        params,
+        method: "GET",
+      }),
+      providesTags: ["Posts"],
+    }),
+    getTopCategories: builder.query<{ data: TopCategoryWithPostCount[] }, any>({
+      query: (params) => ({
+        url: "/posts/top-categories/new",
+        params,
+        method: "GET",
+      }),
+      providesTags: ["Posts"],
+    }),
+    // get Top tags
+    getTopTags: builder.query<{ data: TopCategoryWithPostCount[] }, any>({
+      query: (params) => ({
+        url: "/posts/top-tags/new",
         params,
         method: "GET",
       }),
@@ -202,6 +220,9 @@ export const {
 
   useChangePostStatusMutation,
   useChangePostPlacementMutation,
+
+  useGetTopCategoriesQuery,
+  useGetTopTagsQuery,
 } = postApi;
 
 export default postApi;
