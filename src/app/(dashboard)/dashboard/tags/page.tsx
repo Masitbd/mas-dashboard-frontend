@@ -12,12 +12,12 @@ import {
   Pagination,
 } from "rsuite";
 import { Pencil, Trash2, Search, X } from "lucide-react";
-import {
-  useDeleteCategoryMutation,
-  useGetCategoriesQuery,
-} from "@/redux/api/categories/category.api";
 import { NavLink } from "@/components/layout/Navlink";
 import { confirmDeleteById } from "@/components/layout/SwalConfiramation";
+import {
+  useDeleteTagMutation,
+  useGetTagsQuery,
+} from "@/redux/api/tags/tags.api";
 
 type Category = {
   _id: string;
@@ -84,7 +84,7 @@ export default function PostCategoriesTable() {
     isLoading,
     isFetching,
     isError,
-  } = useGetCategoriesQuery(queryArgs);
+  } = useGetTagsQuery(queryArgs);
 
   const rows: Category[] = useMemo(() => {
     const anyData = categories as any;
@@ -125,14 +125,14 @@ export default function PostCategoriesTable() {
   }, [totalPages, page]);
 
   // delete
-  const [deleteCategory] = useDeleteCategoryMutation();
+  const [deleteCategory] = useDeleteTagMutation();
 
   const handleDelete = async (id: string | number) => {
     try {
       const result = await deleteCategory(id as string).unwrap();
       if (result?.success) return result?.data;
 
-      throw new Error(result?.message || "Failed to delete category.");
+      throw new Error(result?.message || "Failed to delete tag.");
     } catch (err: any) {
       toaster.push(
         <Message showIcon type="error" closable>
@@ -155,19 +155,19 @@ export default function PostCategoriesTable() {
       {/* header */}
       <div className="flex items-center justify-between gap-3">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold">Post Categories</h1>
+          <h1 className="text-2xl font-semibold">Post Tags</h1>
           {normalizedSearch ? (
             <p className="text-sm text-muted">
               Showing results for:{" "}
               <span className="font-medium">{normalizedSearch}</span>
             </p>
           ) : (
-            <p className="text-sm text-muted">Manage your blog categories.</p>
+            <p className="text-sm text-muted">Manage your blog Tags.</p>
           )}
         </div>
 
-        <Button appearance="primary" as={Link} href="/dashboard/categories/new">
-          New category
+        <Button appearance="primary" as={Link} href="/dashboard/tags/new">
+          New Tag
         </Button>
       </div>
 
@@ -194,9 +194,9 @@ export default function PostCategoriesTable() {
                 requestAnimationFrame(() => inputRef.current?.focus());
               }
             }}
-            placeholder="Search categories by name or description…"
+            placeholder="Search tags by name or description…"
             className="w-full rounded-lg border border-border bg-white px-10 py-2.5 text-sm text-foreground outline-none placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/15"
-            aria-label="Search categories"
+            aria-label="Search tags"
           />
 
           {!!searchInput && (
@@ -257,7 +257,7 @@ export default function PostCategoriesTable() {
                     aria-label="Update"
                     icon={<Pencil size={16} />}
                     as={NavLink}
-                    href={`/dashboard/categories/new?id=${rowData._id}&mode=edit`}
+                    href={`/dashboard/tags/new?id=${rowData._id}&mode=edit`}
                   />
 
                   <IconButton
@@ -268,7 +268,7 @@ export default function PostCategoriesTable() {
                     icon={<Trash2 size={16} />}
                     onClick={async () =>
                       await confirmDeleteById(rowData._id, handleDelete, {
-                        successText: "Category has been deleted.",
+                        successText: "Tag has been deleted.",
                       })
                     }
                   />

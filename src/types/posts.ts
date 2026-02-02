@@ -26,6 +26,7 @@ export type TagDTO = {
 };
 
 export type AuthorDTO = {
+  bio: string;
   _id: ObjectIdString;
 
   email?: string;
@@ -33,6 +34,7 @@ export type AuthorDTO = {
   createdAt?: string;
   updatedAt?: string;
   displayName: string;
+  boi?: string;
 };
 
 export type PostBase = {

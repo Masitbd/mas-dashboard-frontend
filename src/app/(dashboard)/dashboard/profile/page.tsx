@@ -113,7 +113,11 @@ const Textarea = forwardRef<HTMLInputElement, TextareaProps>(
   },
 );
 
-function ProfileOnlyForm() {
+function ProfileOnlyForm({
+  params,
+}: {
+  params: { page: "public" | "dashboard" };
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const uuid = searchParams.get("uuid");
@@ -143,11 +147,11 @@ function ProfileOnlyForm() {
   }, [formValue.displayName, submitting]);
 
   const handleSubmit = useCallback(async () => {
-    const check = model.check(formValue);
+    const check: any = model.check(formValue);
     if (check.hasError) {
       setFormError(
         Object.fromEntries(
-          Object.entries(check.errors).map(([k, v]) => [
+          Object.entries(check.errors).map(([k, v]: [k: any, v: any]) => [
             k,
             v?.[0]?.message || "Invalid",
           ]),
@@ -190,7 +194,9 @@ function ProfileOnlyForm() {
           githubUrl: "",
           linkedinUrl: "",
         });
-        router.push("/dashboard/profile/view");
+        router.push(
+          `${params?.page == "public" ? "/profile" : "/dashboard/profile/view"}`,
+        );
       }
     } catch {
       toaster.push(
@@ -378,10 +384,14 @@ function ProfileOnlyForm() {
   );
 }
 
-export default function ProfilePage() {
+export default function ProfilePage({
+  params,
+}: {
+  params: { page: "public" | "dashboard" };
+}) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ProfileOnlyForm />
+      <ProfileOnlyForm params={params} />
     </Suspense>
   );
 }

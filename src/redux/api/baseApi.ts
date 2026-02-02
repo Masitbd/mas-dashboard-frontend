@@ -43,5 +43,7 @@ export const baseApi = createApi({
     "Profiles",
     "Categories",
     "Tags",
+    "comment",
+    "comment-list",
   ],
 });

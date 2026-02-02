@@ -32,6 +32,8 @@ import {
 import { useSearchParams } from "next/navigation";
 import { useGetMyProfileQuery } from "@/redux/api/profile/profile.api";
 import { useSession } from "next-auth/react";
+import { useChangePasswordMutation } from "@/redux/api/auth/auth.api";
+import { ChangePasswordButton } from "@/components/auth/ChangePassword";
 
 export type UserRole = "admin" | "editor" | "author" | "reader";
 export type UserStatus = "active" | "disabled";
@@ -162,7 +164,11 @@ function ExternalLink({ href, label }: { href: string; label: string }) {
   );
 }
 
-export default function UserViewPage() {
+export default function UserViewPage({
+  params,
+}: {
+  params: { page: "dashboard" | "public" };
+}) {
   const {
     data: myProfileData,
     error: profileError,
@@ -213,7 +219,7 @@ export default function UserViewPage() {
     return profile?.displayName || user?.username || "User";
   }, [profile?.displayName, user?.username]);
 
-  console.log(user);
+  const [change, { isLoading, isSuccess }] = useChangePasswordMutation();
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -236,16 +242,12 @@ export default function UserViewPage() {
         </div>
 
         <ButtonToolbar>
-          <Button appearance="ghost" as={Link} href="/dashboard/users">
-            <span className="inline-flex items-center gap-2">
-              Change Password
-            </span>
-          </Button>
+          <ChangePasswordButton />
 
           <Button
             appearance="primary"
             as={Link}
-            href={`/dashboard/profile?mode=edit&uuid=${user?.uuid}`}
+            href={`${params?.page == "public" ? "/profile/edit" : "/dashboard/profile?mode=edit&uuid=${user?.uuid}"}`}
           >
             <span className="inline-flex items-center gap-2">
               <Pencil size={16} />

@@ -16,9 +16,14 @@ const links = [
     label: "Categories",
     icon: Network,
   },
+  {
+    href: "/dashboard/tags",
+    label: "Tags",
+    icon: Network,
+  },
   { href: "/dashboard/posts", label: "Posts", icon: FileText },
-  { href: "/dashboard/comments", label: "Comments", icon: MessageSquare },
-  { href: "/dashboard/newsletter", label: "Newsletter", icon: Mail },
+  // { href: "/dashboard/comments", label: "Comments", icon: MessageSquare },
+  // { href: "/dashboard/newsletter", label: "Newsletter", icon: Mail },
   { href: "/dashboard/profile", label: "Profile", icon: User },
   {
     href: "/dashboard/users",

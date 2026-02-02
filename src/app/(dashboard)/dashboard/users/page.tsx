@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Table,
@@ -10,61 +10,45 @@ import {
   Message,
   useToaster,
   Button,
+  Input,
+  InputGroup,
+  SelectPicker,
+  Pagination,
 } from "rsuite";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2, Search, X } from "lucide-react";
+import { useGetUserListQuery } from "@/redux/api/users/user.api";
 
 type UserStatus = "active" | "inactive" | "blocked";
 type UserRole = "admin" | "editor" | "viewer";
 
 type UserRow = {
   uuid: string;
-  name: string;
+  username: string;
+  displayName: string;
   status: UserStatus;
   role: UserRole;
 };
 
 const { Column, HeaderCell, Cell } = Table;
 
-const MOCK_USERS: UserRow[] = [
-  {
-    uuid: "6b7a3f2e-9e2f-4c3d-8d47-7e4e2a9f1a10",
-    name: "Amina Rahman",
-    status: "active",
-    role: "admin",
-  },
-  {
-    uuid: "9c8d1a22-0b44-4ad7-bc6f-3a0ff8b0f4d1",
-    name: "Saidul Islam",
-    status: "active",
-    role: "editor",
-  },
-  {
-    uuid: "e12f4d9b-2a11-4b6e-9b2d-1f39c0a7e0d2",
-    name: "Nusrat Jahan",
-    status: "inactive",
-    role: "viewer",
-  },
-  {
-    uuid: "1aa0c2b7-4c6c-4bd3-9b6a-0bda4c9ad9d3",
-    name: "Farhan Ahmed",
-    status: "blocked",
-    role: "viewer",
-  },
-  {
-    uuid: "f6b2a5cc-1d0a-4d21-a67d-3d6a3d92f2b4",
-    name: "Tahmid Hasan",
-    status: "active",
-    role: "editor",
-  },
-];
+function useDebouncedValue<T>(value: T, delay = 450) {
+  const [debounced, setDebounced] = useState(value);
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(t);
+  }, [value, delay]);
+
+  return debounced;
+}
 
 function StatusPill({ value }: { value: UserStatus }) {
   const props =
     value === "active"
       ? { color: "green" as const }
       : value === "inactive"
-      ? { color: "orange" as const }
-      : { color: "red" as const };
+        ? { color: "orange" as const }
+        : { color: "red" as const };
 
   return (
     <Tag {...props} className="capitalize">
@@ -78,8 +62,8 @@ function RolePill({ value }: { value: UserRole }) {
     value === "admin"
       ? { color: "blue" as const }
       : value === "editor"
-      ? { color: "violet" as const }
-      : { color: "cyan" as const };
+        ? { color: "violet" as const }
+        : { color: "cyan" as const };
 
   return (
     <Tag {...props} className="capitalize">
@@ -89,44 +73,230 @@ function RolePill({ value }: { value: UserRole }) {
 }
 
 export default function UsersTablePage() {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<UserRow[]>([]);
-  const toaster = useToaster();
+  // ✅ Search + debounce
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedSearch = useDebouncedValue(searchInput, 450);
 
+  // ✅ Filters
+  const [role, setRole] = useState<UserRole | null>(null);
+  const [status, setStatus] = useState<UserStatus | null>(null);
+  const [emailFilter, setEmailFilter] = useState<
+    "all" | "verified" | "unverified"
+  >("all");
+
+  // ✅ Pagination
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+
+  // When search/filters/limit changes → go back to page 1
   useEffect(() => {
-    const t = setTimeout(() => {
-      setData(MOCK_USERS);
-      setLoading(false);
-    }, 900);
+    setPage(1);
+  }, [debouncedSearch, role, status, emailFilter, limit]);
 
-    return () => clearTimeout(t);
-  }, []);
+  const roleOptions = useMemo(
+    () => [
+      { label: "All roles", value: null },
+      { label: "Admin", value: "admin" },
+      { label: "Editor", value: "editor" },
+      { label: "Viewer", value: "viewer" },
+    ],
+    [],
+  );
+
+  const statusOptions = useMemo(
+    () => [
+      { label: "All status", value: null },
+      { label: "Active", value: "active" },
+      { label: "Inactive", value: "inactive" },
+      { label: "Blocked", value: "blocked" },
+    ],
+    [],
+  );
+
+  const emailOptions = useMemo(
+    () => [
+      { label: "All emails", value: "all" },
+      { label: "Email verified", value: "verified" },
+      { label: "Not verified", value: "unverified" },
+    ],
+    [],
+  );
+
+  const limitOptions = useMemo(
+    () => [
+      { label: "10 / page", value: 10 },
+      { label: "20 / page", value: 20 },
+      { label: "50 / page", value: 50 },
+    ],
+    [],
+  );
+
+  // ✅ Build query (debounced search goes into query)
+  const queryParams = useMemo(() => {
+    const q: Record<string, any> = { page, limit };
+
+    if (debouncedSearch?.trim()) q.searchTerm = debouncedSearch.trim();
+    if (role) q.role = role;
+    if (status) q.status = status;
+
+    // supports your filter: emailVarified
+    if (emailFilter === "verified") q.emailVarified = true;
+    if (emailFilter === "unverified") q.emailVarified = false;
+
+    return q;
+  }, [page, limit, debouncedSearch, role, status, emailFilter]);
+
+  const {
+    data: userdata,
+    isLoading,
+    isFetching,
+  } = useGetUserListQuery(queryParams);
+
+  const toaster = useToaster();
+  const loading = isLoading || isFetching;
+
+  // meta helpers (matches your shape userdata?.data?.meta)
+  const meta = (userdata as any)?.data?.meta ?? {
+    page,
+    limit,
+    total: 0,
+    pages: 0,
+  };
+
+  const total = Number(meta?.total ?? 0);
+  const activePage = Number(meta?.page ?? page);
+  const activeLimit = Number(meta?.limit ?? limit);
+
+  const from = total === 0 ? 0 : (activePage - 1) * activeLimit + 1;
+  const to = total === 0 ? 0 : Math.min(activePage * activeLimit, total);
 
   const handleDelete = (user: UserRow) => {
-    // Replace with confirm modal + API call
-    setData((prev) => prev.filter((u) => u.uuid !== user.uuid));
     toaster.push(
       <Message type="success" closable>
-        User deleted: <b>{user.name}</b>
+        User deleted: <b>{user.displayName || user.username}</b>
       </Message>,
-      { placement: "topEnd" }
+      { placement: "topEnd" },
     );
   };
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Users</h1>
 
-        {/* Optional CTA if you want */}
         <Button appearance="primary" as={Link} href="/dashboard/users/new">
           New user
         </Button>
       </div>
 
+      {/* ✅ Search + Filters (new) */}
+      <div className="rounded-xl border border-border bg-card p-4">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center">
+          <div className="w-full md:flex-1">
+            <InputGroup inside className="w-full">
+              <InputGroup.Addon>
+                <Search size={16} />
+              </InputGroup.Addon>
+
+              <Input
+                value={searchInput}
+                onChange={(v) => setSearchInput(String(v))}
+                placeholder="Search by username, display name, uuid..."
+              />
+
+              {searchInput ? (
+                <InputGroup.Button
+                  onClick={() => setSearchInput("")}
+                  aria-label="Clear search"
+                >
+                  <X size={16} />
+                </InputGroup.Button>
+              ) : null}
+            </InputGroup>
+          </div>
+
+          <div className="">
+            <Button
+              appearance="ghost"
+              disabled={loading}
+              onClick={() => {
+                setSearchInput("");
+                setRole(null);
+                setStatus(null);
+                setEmailFilter("all");
+                setPage(1);
+                setLimit(10);
+              }}
+            >
+              Clear filters
+            </Button>
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-4">
+          <div>
+            <label className="mb-1 block text-xs text-muted">Role</label>
+            <SelectPicker
+              className="w-full"
+              data={roleOptions as any}
+              cleanable={false}
+              searchable={false}
+              value={role}
+              onChange={(v) => setRole((v as UserRole) ?? null)}
+              placeholder="All roles"
+              block
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs text-muted">Status</label>
+            <SelectPicker
+              className="w-full"
+              data={statusOptions as any}
+              cleanable={false}
+              searchable={false}
+              value={status}
+              onChange={(v) => setStatus((v as UserStatus) ?? null)}
+              placeholder="All status"
+              block
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs text-muted">Email</label>
+            <SelectPicker
+              className="w-full"
+              data={emailOptions as any}
+              cleanable={false}
+              searchable={false}
+              value={emailFilter}
+              onChange={(v) => setEmailFilter((v as any) ?? "all")}
+              placeholder="All emails"
+              block
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs text-muted">Rows</label>
+            <SelectPicker
+              className="w-full"
+              data={limitOptions as any}
+              cleanable={false}
+              searchable={false}
+              value={limit}
+              onChange={(v) => setLimit(Number(v) || 10)}
+              placeholder="10 / page"
+              block
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* ✅ Table wrapper (UNCHANGED TABLE INSIDE) */}
       <div className="overflow-hidden rounded-xl border border-border bg-card">
         <Table
-          data={data}
+          data={userdata?.data?.data}
           loading={loading}
           bordered
           cellBordered
@@ -146,8 +316,18 @@ export default function UsersTablePage() {
           </Column>
 
           <Column flexGrow={1} minWidth={200} align="left">
-            <HeaderCell>Name</HeaderCell>
-            <Cell dataKey="name" />
+            <HeaderCell>Username</HeaderCell>
+            <Cell dataKey="username" />
+          </Column>
+
+          <Column flexGrow={1} minWidth={200} align="left">
+            <HeaderCell>Display Name</HeaderCell>
+            <Cell dataKey="displayName" />
+          </Column>
+
+          <Column flexGrow={1.5} minWidth={200} align="left">
+            <HeaderCell>Email</HeaderCell>
+            <Cell dataKey="email" />
           </Column>
 
           <Column width={140} align="left">
@@ -185,25 +365,43 @@ export default function UsersTablePage() {
                     as={Link}
                     href={`/dashboard/users/view?uuid=${rowData.uuid}`}
                   />
-                  <IconButton
-                    size="sm"
-                    appearance="ghost"
-                    color="red"
-                    aria-label="Delete"
-                    icon={<Trash2 size={16} />}
-                    onClick={() => handleDelete(rowData)}
-                  />
                 </ButtonToolbar>
               )}
             </Cell>
           </Column>
         </Table>
 
-        {!loading && data.length === 0 && (
+        {/* empty state (fixed) */}
+        {!loading && (userdata?.data?.data?.length ?? 0) === 0 && (
           <div className="p-6">
             <Message type="info">No users found.</Message>
           </div>
         )}
+      </div>
+
+      {/* ✅ Pagination (new) */}
+      <div className="flex flex-col items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3 md:flex-row">
+        <div className="text-sm text-muted">
+          Showing <span className="text-foreground">{from}</span>–
+          <span className="text-foreground">{to}</span> of{" "}
+          <span className="text-foreground">{total}</span>
+          {loading ? <span className="ml-2">(loading...)</span> : null}
+        </div>
+
+        <Pagination
+          prev
+          next
+          first
+          last
+          ellipsis
+          boundaryLinks
+          size="sm"
+          total={total}
+          limit={activeLimit}
+          activePage={activePage}
+          onChangePage={(p) => setPage(p)}
+          disabled={loading || total === 0}
+        />
       </div>
     </div>
   );
