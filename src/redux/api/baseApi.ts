@@ -45,5 +45,6 @@ export const baseApi = createApi({
     "Tags",
     "comment",
     "comment-list",
+    "assets",
   ],
 });

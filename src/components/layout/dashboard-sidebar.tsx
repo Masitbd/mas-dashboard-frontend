@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 
 const links = [
-  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+  // { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   {
     href: "/dashboard/categories",
     label: "Categories",
@@ -24,7 +24,7 @@ const links = [
   { href: "/dashboard/posts", label: "Posts", icon: FileText },
   // { href: "/dashboard/comments", label: "Comments", icon: MessageSquare },
   // { href: "/dashboard/newsletter", label: "Newsletter", icon: Mail },
-  { href: "/dashboard/profile", label: "Profile", icon: User },
+  // { href: "/dashboard/profile", label: "Profile", icon: User },
   {
     href: "/dashboard/users",
     label: "Users",

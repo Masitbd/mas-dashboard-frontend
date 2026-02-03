@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
+import OrderedList from "@tiptap/extension-ordered-list";
+import BulletList from "@tiptap/extension-bullet-list";
 import {
   Bold,
   Italic,
@@ -20,8 +22,6 @@ import {
   Link as LinkIcon,
 } from "lucide-react";
 import { Button } from "rsuite";
-import OrderedList from "@tiptap/extension-ordered-list";
-import BulletList from "@tiptap/extension-bullet-list";
 
 const extensions = [
   StarterKit,
@@ -29,14 +29,10 @@ const extensions = [
   Image,
   Link.configure({ openOnClick: false }),
   BulletList.configure({
-    HTMLAttributes: {
-      class: "list-disc ml-2",
-    },
+    HTMLAttributes: { class: "list-disc ml-2" },
   }),
   OrderedList.configure({
-    HTMLAttributes: {
-      class: "list-decimal ml-2",
-    },
+    HTMLAttributes: { class: "list-decimal ml-2" },
   }),
 ];
 
@@ -44,11 +40,15 @@ export function PostEditor({
   content,
   onChange,
   defaultContent,
+  onPickImageFile,
 }: {
   content: string;
   onChange: (value: string) => void;
   defaultContent?: string;
+  onPickImageFile?: (file: File) => Promise<string> | string; // returns local blob URL
 }) {
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
+
   const editor = useEditor({
     extensions,
     content,
@@ -58,72 +58,104 @@ export function PostEditor({
       },
     },
     onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      onChange(html);
+      onChange(editor.getHTML());
     },
   });
 
   useEffect(() => {
-    if (editor && defaultContent) {
-      editor.commands.setContent(defaultContent);
-    }
+    if (editor && defaultContent) editor.commands.setContent(defaultContent);
   }, [editor, defaultContent]);
 
-  if (!editor) {
-    return null;
-  }
+  if (!editor) return null;
+
+  const handleImagePick = async (file: File) => {
+    if (!file) return;
+
+    // Must be image
+    if (!file.type?.startsWith("image/")) return;
+
+    const src = onPickImageFile
+      ? await Promise.resolve(onPickImageFile(file))
+      : "";
+
+    if (src) {
+      editor.chain().focus().setImage({ src }).run();
+    }
+  };
 
   return (
-    <div className="space-y-4 w-full ">
-      <div className="flex flex-wrap gap-2 ">
+    <div className="space-y-4 w-full">
+      {/* hidden file picker for editor images */}
+      <input
+        ref={imageInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+
+          // reset input so selecting same file again triggers change
+          e.target.value = "";
+          void handleImagePick(file);
+        }}
+      />
+
+      <div className="flex flex-wrap gap-2">
         <Button
           size="sm"
           aria-label="Bold"
           onClick={() => editor.chain().focus().toggleBold().run()}
-          active={editor?.isActive("bold")}
+          active={editor.isActive("bold")}
         >
           <Bold size={14} />
         </Button>
+
         <Button
           size="sm"
           aria-label="Italic"
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          active={editor?.isActive("italic")}
+          active={editor.isActive("italic")}
         >
           <Italic size={14} />
         </Button>
+
         <Button
           size="sm"
           aria-label="Underline"
           onClick={() => editor.chain().focus().toggleUnderline().run()}
-          active={editor?.isActive("underline")}
+          active={editor.isActive("underline")}
         >
           <UnderlineIcon size={14} />
         </Button>
+
         <Button
           size="sm"
           aria-label="Strikethrough"
           onClick={() => editor.chain().focus().toggleStrike().run()}
-          active={editor?.isActive("strike")}
+          active={editor.isActive("strike")}
         >
           <Strikethrough size={14} />
         </Button>
+
         <Button
           size="sm"
           aria-label="Bullet list"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          active={editor?.isActive("bulletList")}
+          active={editor.isActive("bulletList")}
         >
           <List size={14} />
         </Button>
+
         <Button
           size="sm"
           aria-label="Ordered list"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          active={editor?.isActive("orderedList")}
+          active={editor.isActive("orderedList")}
         >
           <ListOrdered size={14} />
         </Button>
+
         <Button
           size="sm"
           aria-label="Blockquote"
@@ -131,6 +163,7 @@ export function PostEditor({
         >
           <Quote size={14} />
         </Button>
+
         <Button
           size="sm"
           aria-label="Code block"
@@ -138,6 +171,7 @@ export function PostEditor({
         >
           <Code size={14} />
         </Button>
+
         <Button
           size="sm"
           aria-label="Horizontal rule"
@@ -145,18 +179,15 @@ export function PostEditor({
         >
           <Minus size={14} />
         </Button>
+
         <Button
           size="sm"
           aria-label="Insert image"
-          onClick={() => {
-            const url = window.prompt("Image URL");
-            if (url) {
-              editor.chain().focus().setImage({ src: url }).run();
-            }
-          }}
+          onClick={() => imageInputRef.current?.click()}
         >
           <ImageIcon size={14} />
         </Button>
+
         <Button
           size="sm"
           aria-label="Insert link"
@@ -175,6 +206,7 @@ export function PostEditor({
           <LinkIcon size={14} />
         </Button>
       </div>
+
       <div className="rounded-xl border border-border bg-card p-4 w-full">
         <EditorContent editor={editor} />
       </div>
