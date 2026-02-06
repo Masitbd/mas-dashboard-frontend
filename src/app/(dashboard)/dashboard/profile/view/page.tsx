@@ -34,6 +34,7 @@ import { useGetMyProfileQuery } from "@/redux/api/profile/profile.api";
 import { useSession } from "next-auth/react";
 import { useChangePasswordMutation } from "@/redux/api/auth/auth.api";
 import { ChangePasswordButton } from "@/components/auth/ChangePassword";
+import { AvatarEdit } from "@/components/users/AvatarEdit";
 
 export type UserRole = "admin" | "editor" | "author" | "reader";
 export type UserStatus = "active" | "disabled";
@@ -174,6 +175,7 @@ export default function UserViewPage({
     error: profileError,
     isError: idProfileError,
     isLoading: loading,
+    refetch: refetchProfile,
   } = useGetMyProfileQuery(undefined);
   const session = useSession();
   const searchParams = useSearchParams();
@@ -291,18 +293,15 @@ export default function UserViewPage({
               </div>
 
               <div className="hidden md:flex items-center gap-3">
-                <div className="h-11 w-11 overflow-hidden rounded-full border border-border bg-muted flex items-center justify-center">
-                  {profile?.avatarUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={profile?.avatarUrl}
-                      alt="avatar"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <UserIcon size={18} className="text-secondary" />
-                  )}
-                </div>
+                <AvatarEdit
+                  avatarUrl={profile?.avatarUrl}
+                  refetchProfile={refetchProfile}
+                  onUpdated={(newUrl) => {
+                    setProfile((prev) =>
+                      prev ? { ...prev, avatarUrl: newUrl } : prev,
+                    );
+                  }}
+                />
               </div>
             </div>
 

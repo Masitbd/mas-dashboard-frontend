@@ -23,6 +23,7 @@ import {
   useDeleteAssetMutation,
   useDeleteAssetByUrlMutation,
 } from "@/redux/api/assets/asset.api";
+import { useRouter } from "next/navigation";
 
 interface PageProps {
   params: { id: string };
@@ -97,6 +98,7 @@ function extractRemoteCloudinaryImgUrls(html: string): string[] {
 }
 
 export default function EditPostPage({ params }: PageProps) {
+  const router = useRouter();
   const toaster = useToaster();
 
   const { data: post, isLoading: postLoading } = useGetPostByIdQuery(
@@ -398,6 +400,7 @@ export default function EditPostPage({ params }: PageProps) {
         </Message>,
         { placement: "topEnd" },
       );
+      router.push(`/dashboard/posts/${result?.data?._id}/view`);
     } catch (err) {
       // Rollback: delete newly uploaded assets from this attempt so nothing is orphaned
       await Promise.allSettled(

@@ -116,13 +116,19 @@ export function Header() {
             <Search size={16} />
           </Link>
 
-          <Link
-            href="/write-on"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card/40 supports-[backdrop-filter]:bg-card/25 supports-[backdrop-filter]:backdrop-blur-lg transition hover:text-foreground hover:border-border"
-            aria-label="Write"
-          >
-            <PenSquare size={16} />
-          </Link>
+          {data?.user?.role == "admin" ||
+          data?.user?.role == "super-admin" ||
+          data?.user?.role == "editor" ? (
+            <Link
+              href="/dashboard/posts"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card/40 supports-[backdrop-filter]:bg-card/25 supports-[backdrop-filter]:backdrop-blur-lg transition hover:text-foreground hover:border-border"
+              aria-label="Write"
+            >
+              <PenSquare size={16} />
+            </Link>
+          ) : (
+            <></>
+          )}
 
           <Link
             href="/contact"
@@ -275,13 +281,19 @@ export function Header() {
             Search
           </Link>
 
-          <Link
-            href="/write-on"
-            className="inline-flex items-center gap-2 hover:text-foreground transition"
-            onClick={() => setMobileOpen(false)}
-          >
-            Write on Notebook
-          </Link>
+          {data?.user?.role == "admin" ||
+          data?.user?.role == "super-admin" ||
+          data?.user?.role == "editor" ? (
+            <Link
+              href="/dashboard/posts"
+              className="inline-flex items-center gap-2 hover:text-foreground transition"
+              onClick={() => setMobileOpen(false)}
+            >
+              Write on Notebook
+            </Link>
+          ) : (
+            <></>
+          )}
 
           {/* Mobile Auth */}
           <div className="pt-2">

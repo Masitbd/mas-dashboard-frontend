@@ -13,6 +13,7 @@ export type AssetUseRef = {
 };
 
 export type Asset = {
+  secureUrl: string;
   _id: string;
   url: string;
 
@@ -40,6 +41,8 @@ export type Asset = {
 };
 
 export type ApiResponse<T> = {
+  url: any;
+  secureUrl: any;
   success: boolean;
   message: string;
   data: T;

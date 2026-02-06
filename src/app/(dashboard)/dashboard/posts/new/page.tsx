@@ -18,6 +18,7 @@ import {
   useDeleteAssetMutation,
   useUploadAssetMutation,
 } from "@/redux/api/assets/asset.api";
+import { useRouter } from "next/navigation";
 
 type LocalImage = {
   file: File;
@@ -64,6 +65,7 @@ function replaceImgSrcs(html: string, map: Record<string, string>): string {
 }
 
 export default function NewPostPage() {
+  const router = useRouter();
   const toaster = useToaster();
 
   const [createPost, { isLoading: createPostLoading }] =
@@ -244,6 +246,7 @@ export default function NewPostPage() {
       setFormValue((prev) => ({ ...prev, coverImage: finalCoverUrl }));
 
       // revoke local blobs (they’re replaced by remote URLs now)
+
       if (coverImage?.localUrl) URL.revokeObjectURL(coverImage.localUrl);
       Object.keys(editorImages).forEach((localUrl) =>
         URL.revokeObjectURL(localUrl),
@@ -258,6 +261,7 @@ export default function NewPostPage() {
         </Message>,
         { placement: "topEnd" },
       );
+      router.push(`/dashboard/posts/${result?.data?._id}/view`);
     } catch (err) {
       // Rollback: delete uploaded assets to avoid orphans
       await Promise.allSettled(
