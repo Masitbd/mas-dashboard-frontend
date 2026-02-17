@@ -8,6 +8,7 @@ const RecentlyPostedSection = () => {
   const { data: postData } = useGetPostsPopulatedQuery({
     page: 1,
     limit: 10,
+    status: "published",
   });
 
   return (

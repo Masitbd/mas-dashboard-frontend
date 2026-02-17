@@ -71,6 +71,7 @@ export function Header() {
     | { name?: string | null; image?: string | null }
     | undefined;
 
+  console.log(user);
   return (
     <header
       className={[
@@ -162,7 +163,7 @@ export function Header() {
                     />
                   ) : (
                     <span className="flex h-full w-full items-center justify-center text-[11px] font-semibold text-brand">
-                      {getInitials(user.name)}
+                      {getInitials(user.role)}
                     </span>
                   )}
                 </span>
@@ -193,7 +194,7 @@ export function Header() {
                     Signed in as
                   </p>
                   <p className="mt-1 truncate text-sm font-medium text-foreground">
-                    {user.name ?? "User"}
+                    {user.username ?? "User"}
                   </p>
                 </div>
 
@@ -303,7 +304,7 @@ export function Header() {
                   Signed in as
                 </p>
                 <p className="mt-1 text-sm font-semibold text-foreground">
-                  {user.name ?? "User"}
+                  {user.username ?? "User"}
                 </p>
 
                 <div className="mt-4 grid gap-2">

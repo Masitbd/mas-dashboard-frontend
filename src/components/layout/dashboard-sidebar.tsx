@@ -7,6 +7,8 @@ import {
   User,
   Network,
   Users,
+  Contact,
+  Tags,
 } from "lucide-react";
 
 const links = [
@@ -19,7 +21,7 @@ const links = [
   {
     href: "/dashboard/tags",
     label: "Tags",
-    icon: Network,
+    icon: Tags,
   },
   { href: "/dashboard/posts", label: "Posts", icon: FileText },
   // { href: "/dashboard/comments", label: "Comments", icon: MessageSquare },
@@ -29,6 +31,11 @@ const links = [
     href: "/dashboard/users",
     label: "Users",
     icon: Users,
+  },
+  {
+    href: "/dashboard/contacts",
+    label: "Contacts",
+    icon: Contact,
   },
 ];
 

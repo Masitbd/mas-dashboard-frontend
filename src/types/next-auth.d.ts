@@ -15,6 +15,7 @@ declare module "next-auth" {
     branch?: string;
     status?: string;
     emailVerifiedAt?: string | null;
+    profileId: string;
   }
 
   /**

@@ -281,7 +281,7 @@ export default function DashboardPostViewPage() {
           </div>
 
           {/* Body */}
-          <div className="grid gap-5 p-5 lg:grid-cols-[1.6fr_1fr]">
+          <div className="grid gap-5 p-5 ">
             {/* Main */}
             <div className="space-y-5">
               {/* Cover */}

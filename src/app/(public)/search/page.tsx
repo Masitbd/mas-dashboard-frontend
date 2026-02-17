@@ -52,6 +52,7 @@ export default function SearchPage() {
       limit: "10",
       page: 1,
       searchTerm: debouncedTerm,
+      status: "published",
     },
     {
       // don't query until user types something

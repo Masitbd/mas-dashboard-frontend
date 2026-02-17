@@ -11,6 +11,7 @@ const FeaturedPost = () => {
     page: 1,
     limit: 10,
     placement: "featured",
+    status: "published",
   });
   return (
     <div className="space-y-8">

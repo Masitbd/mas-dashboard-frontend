@@ -12,7 +12,7 @@ interface PageProps {
 export default function TagPage({ params }: PageProps) {
   const tag = params.slug.replace("-", " ");
   const { data: tagData } = useGetTagsQuery(
-    { searchTerm: tag },
+    { searchTerm: tag, status: "published" },
     { skip: !tag },
   );
   const { data: postData } = useGetPostsPopulatedQuery(
