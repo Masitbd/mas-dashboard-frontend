@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, Menu, PenSquare, Search } from "lucide-react";
+import { ChevronDown, Menu, PenSquare, Search, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Container } from "./container";
 import { useSession, signOut } from "next-auth/react";
@@ -67,11 +67,8 @@ export function Header() {
     };
   }, []);
 
-  const user = data?.user as
-    | { name?: string | null; image?: string | null }
-    | undefined;
+  const user = data?.user;
 
-  console.log(user);
   return (
     <header
       className={[
@@ -154,16 +151,16 @@ export function Header() {
                 aria-expanded={profileOpen}
               >
                 <span className="relative h-8 w-8 overflow-hidden rounded-full border border-border bg-accent">
-                  {user.image ? (
+                  {user.avatarUrl ? (
                     <Image
-                      src={user.image}
-                      alt={user.name ?? "User"}
+                      src={user.avatarUrl}
+                      alt={user.username ?? "User"}
                       fill
                       className="object-cover"
                     />
                   ) : (
                     <span className="flex h-full w-full items-center justify-center text-[11px] font-semibold text-brand">
-                      {getInitials(user.role)}
+                      <User />
                     </span>
                   )}
                 </span>

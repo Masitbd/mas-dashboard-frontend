@@ -44,8 +44,10 @@ const RecentlyPostedSection = () => {
                   <p className="text-sm text-secondary">{post.excerpt}</p>
                   <div className="text-[11px] text-muted">
                     {post.author.displayName} ·{" "}
-                    {post?.createdAt ?? new Date().toLocaleString()} ·{" "}
-                    {post.readingTime}
+                    {new Date(post?.createdAt ?? new Date()).toLocaleDateString(
+                      "en-GB",
+                    ) ?? new Date().toLocaleDateString("en-GB")}{" "}
+                    · {post.readingTime}
                   </div>
                 </article>
               </Link>

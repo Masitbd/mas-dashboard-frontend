@@ -21,6 +21,8 @@ export const jwtDecypherAndUserInfoProvider = (tokens: {
     status: access?.status,
     emailVerifiedAt: access?.emailVerifiedAt,
     profileId: access?.profileId,
+    avatarUrl: access?.avatarUrl,
+    displayName: access?.displayName,
   };
 
   if (Object.hasOwn(access, "branch")) {

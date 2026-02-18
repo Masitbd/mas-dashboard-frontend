@@ -16,6 +16,8 @@ declare module "next-auth" {
     status?: string;
     emailVerifiedAt?: string | null;
     profileId: string;
+    avatarUrl?: string;
+    displayName?: string;
   }
 
   /**

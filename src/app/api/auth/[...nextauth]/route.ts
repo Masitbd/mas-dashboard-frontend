@@ -97,7 +97,7 @@ const handler = NextAuth({
 
           const { user, validity, decodedRefresh } =
             jwtDecypherAndUserInfoProvider(tokens);
-          console.log(user);
+
           return {
             // User object needs to have a string id so use refresh token id
             id: decodedRefresh.jti,
