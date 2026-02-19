@@ -47,5 +47,6 @@ export const baseApi = createApi({
     "comment-list",
     "assets",
     "Contacts",
+    "NewsletterSubscribers",
   ],
 });

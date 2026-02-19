@@ -11,18 +11,19 @@ export function AuthorBadge({
   author: Author;
   publishedAt: string;
 }) {
+  console.log(author);
   return (
     <div className="flex items-center gap-3 text-xs text-muted">
       <div className="relative h-9 w-9 overflow-hidden rounded-full">
         <Image
-          src={author?.image || fallbackAvatar}
+          src={author?.avatarUrl || fallbackAvatar}
           alt={author?.displayName}
           fill
           className="object-cover"
         />
       </div>
       <div>
-        <p className="font-medium text-foreground">{author.name}</p>
+        <p className="font-medium text-foreground">{author.displayName}</p>
         <p className="text-[11px] uppercase tracking-[0.2em]">
           {new Date(publishedAt ?? new Date()).toLocaleDateString()}
         </p>

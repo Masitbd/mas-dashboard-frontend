@@ -6,6 +6,7 @@ import { Container } from "@/components/layout/container";
 import { CommentSection } from "@/components/blog/comment-section";
 import { useGetPostBySlugPopulatedQuery } from "@/redux/api/posts/post.api";
 import { Calendar, Clock, Folder, Hash, User2 } from "lucide-react";
+import { Avatar } from "rsuite";
 
 interface PageProps {
   params: { slug: string };
@@ -52,7 +53,8 @@ export default function PostPage({ params }: PageProps) {
 
   // placeholders (you'll add real href later)
   const authorHref = "#";
-  const categoryHref = "#";
+  const categoryHref =
+    "/categories/" + post?.category?.name?.toLowerCase().split(" ").join("-");
   const tagHref = (tagId?: string) => "#";
 
   const showLoading = isLoading || isFetching;
@@ -176,7 +178,10 @@ export default function PostPage({ params }: PageProps) {
                     tags.map((t) => (
                       <Link
                         key={t?._id ?? t?.name}
-                        href={tagHref(t?._id)}
+                        href={
+                          "/tags/" +
+                          t?.name?.toLowerCase()?.split(" ")?.join("-")
+                        }
                         className="inline-flex items-center rounded-full border border-border bg-card px-3 py-1 text-xs text-secondary transition hover:border-brand hover:text-foreground"
                       >
                         {t?.name}
@@ -197,15 +202,21 @@ export default function PostPage({ params }: PageProps) {
                       className="relative h-14 w-14 overflow-hidden rounded-2xl border border-border bg-accent"
                       aria-label="Author profile"
                     >
-                      <Image
-                        src={
-                          (post?.author?.avatarUrl as string) ||
-                          "/images/avatar-placeholder.png"
-                        }
-                        alt={(post?.author?.displayName as string) || "Author"}
-                        fill
-                        className="object-cover"
-                      />
+                      {post?.author?.avatarUrl ? (
+                        <Image
+                          src={
+                            (post?.author?.avatarUrl as string) ||
+                            "/images/avatar-placeholder.png"
+                          }
+                          alt={
+                            (post?.author?.displayName as string) || "Author"
+                          }
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <Avatar className="h-14 w-14" />
+                      )}
                     </Link>
 
                     <div>
@@ -219,11 +230,6 @@ export default function PostPage({ params }: PageProps) {
                       >
                         {post?.author?.displayName ?? "Unknown author"}
                       </Link>
-
-                      <p className="mt-1 text-sm text-secondary">
-                        {post?.author?.bio ??
-                          "Author bio will appear here. Add a short, professional line about the writer."}
-                      </p>
                     </div>
                   </div>
 

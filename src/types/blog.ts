@@ -4,7 +4,7 @@ export interface Author {
   id: string;
   name: string;
   role: Role;
-  image?: string;
+  avatarUrl?: string;
   bio?: string;
   displayName: string;
 }
