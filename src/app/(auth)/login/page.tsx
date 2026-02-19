@@ -43,7 +43,7 @@ export default function SignInPage() {
         const updatedSession = await getSession();
         const role = updatedSession?.user?.role;
 
-        if (role && role !== "viewer") router.push("/dashboard");
+        if (role && role !== "reader") router.push("/dashboard");
         else router.push("/");
       } else {
         setError("Login failed. Please try again.");
