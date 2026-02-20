@@ -2,18 +2,17 @@ import { getToken } from "next-auth/jwt";
 
 import { NextRequest, NextResponse } from "next/server";
 import { ENUM_USER } from "./enums/EnumUser";
-const unprotectedRoutes = ["/login", "/sign-up", "/public", "/"];
 
 const managerRoutes = ["/dashboard"];
+const protectedRoutes = ["/profile"];
 export default async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
   if (token && req.nextUrl.pathname === "/login") {
     return NextResponse.redirect(req.nextUrl.origin);
   }
-
   // // Redirection if the user is not authenticated
-  if (!token && !unprotectedRoutes.includes(req.nextUrl.pathname)) {
+  if (!token && protectedRoutes.includes(req.nextUrl.pathname)) {
     return NextResponse.redirect(`${req.nextUrl.origin}/login`);
   }
 
@@ -60,6 +59,6 @@ export default async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|reset-password|unauthorized).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|reset-password|unauthorized|posts|about|authors|categories|contact|faq|privacy|search|tags|terms|write-on).*)",
   ],
 };
